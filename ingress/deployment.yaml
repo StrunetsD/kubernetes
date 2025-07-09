@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nginx-ingress
+  name: ingress-nginx-deployment
+  labels: 
+    app: ingress-nginx
+spec:
+  replicas: 3
+  minReadySeconds: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: ingress-nginx
+  template:
+    metadata: 
+      labels:
+        app: ingress-nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports: 
+        - containerPort: 80
