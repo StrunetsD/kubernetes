@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nginx-ingress
+  name: ingress-nginx-deployment-startup
+  labels: 
+    app: ingress-nginx
+spec:
+  replicas: 3
+  minReadySeconds: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: ingress-nginx
+  template:
+    metadata: 
+      labels:
+        app: ingress-nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports: 
+        - containerPort: 80
+        startupProbe:
+            tcpSocket:
+              port: 81
+            initialDelaySeconds: 30
+            periodSeconds: 1
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+        livenessProbe:
+            tcpSocket:
+              port: 81
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+        readinessProbe:
+          tcpSocket:
+            port: 81
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
