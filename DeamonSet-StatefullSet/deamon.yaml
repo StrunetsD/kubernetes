@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: deamon
+  labels:
+    app: deamon
+spec:
+  selector:
+    matchLabels:
+      app: deamon
+  template:
+    metadata:
+      labels:
+        app: deamon
+    spec:
+      containers:
+      - name: pause-container
+        image: k8s.gcr.io/pause:3.9
