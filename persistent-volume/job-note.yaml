@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: note-writer-job
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure 
+      containers:
+      - name: note-writer-container
+        image: busybox:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - "echo 'Это моя заметка, созданная Job-ой!' > /mnt/notes/my-note.txt && echo 'Заметка успешно записана.' && sleep 10"
+        volumeMounts:
+        - name: notes-storage 
+          mountPath: /mnt/notes 
+      volumes:
+      - name: notes-storage
+        persistentVolumeClaim: 
+          claimName: notes-pvc 

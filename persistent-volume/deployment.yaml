@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: note-reader-deployment
+  labels:
+    app: note-reader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: note-reader
+  template:
+    metadata:
+      labels:
+        app: note-reader
+    spec:
+      containers:
+      - name: note-reader-container
+        image: busybox:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - "echo '--- Ожидаю заметку ---'; while true; do if [ -f /mnt/notes/my-note.txt ]; then echo '--- Заметка найдена:'; cat /mnt/notes/my-note.txt; else echo '--- Заметка еще не создана ---'; fi; sleep 5; done"
+        volumeMounts:
+        - name: notes-storage
+          mountPath: /mnt/notes # Путь в контейнере
+      volumes:
+      - name: notes-storage # Имя Volume, на которое ссылается volumeMounts
+        persistentVolumeClaim: # Указываем, что источник этого Volume - PVC
+          claimName: notes-pvc # Имя PVC, который мы создали ранее

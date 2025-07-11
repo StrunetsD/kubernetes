@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: notes-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain # Сохранять данные после удаления PVC
+  hostPath: # Для демонстрации используем hostPath. В продакшене используйте облачные диски или NFS.
+    path: "/mnt/data/notes-volume" # Путь на узле Kubernetes
+    type: DirectoryOrCreate # Создать директорию, если ее нет
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: notes-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce # Должен соответствовать accessModes PV
+  resources:
+    requests:
+      storage: 500Mi
